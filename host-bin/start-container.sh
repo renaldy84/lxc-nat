@@ -15,7 +15,9 @@ NAME=$1
 
 if [[ $NAME = fw* ]]; then
     init=$(dirname $0)/../init/fw.sh
+    sudo=sudo
 else
     init=/bin/bash
+    sudo=""
 fi
-screen -S $NAME -- sudo lxc-start -n $NAME $init
+screen -S $NAME -- $sudo lxc-start -n $NAME $init

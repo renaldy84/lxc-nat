@@ -32,3 +32,19 @@ END
     lxc-create -n $name -f $conf_file
 
 done
+
+
+for i in $(seq 3); do
+    name=server$i
+    conf_file=/tmp/lxc-$name.conf
+    cat > $conf_file <<END
+lxc.utsname = $name
+
+lxc.network.type = veth
+lxc.network.flags = up
+lxc.network.link = brpub
+lxc.network.ipv4 = 10.0.3.11$i/24
+END
+    lxc-create -n $name -f $conf_file
+
+done

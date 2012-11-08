@@ -1,7 +1,9 @@
 #!/bin/bash
 
 brctl addbr brpub
-ip addr add 10.0.3.10/24 dev brpub
+for n in $(seq 10 19); do
+    ip addr add 10.0.3.$n/24 dev brpub
+done
 ip link set brpub up
 
 for i in $(seq 2); do

@@ -17,7 +17,7 @@ insertrule filter OUTPUT -j lxc-input
 
 EXTNET=10.10.3.0/24
 
-for iface in brpub brint1 brint2; do
+for iface in brpub brint1 brint2 brdub1 brdub2; do
     $IPT -A lxc-forward -i $iface -o $iface -j ACCEPT
     $IPT -A lxc-input -i $iface -j ACCEPT
     $IPT -A lxc-output -o $iface -j ACCEPT

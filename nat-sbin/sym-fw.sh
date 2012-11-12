@@ -34,15 +34,16 @@ $IPT -A FORWARD -m conntrack --ctstate INVALID -j DROP
 $IPT -A INPUT -s $INTNET -i $INTIF -j ACCEPT
 $IPT -A INPUT -s $HOST -i $EXTIF -j ACCEPT
 $IPT -A OUTPUT -p icmp -j ACCEPT
-$IPT -A OUTPUT -p tcp --sport $UNPRIVPORTS -o $EXTIF -j ACCEPT
-$IPT -A OUTPUT -p udp --sport $UNPRIVPORTS -o $EXTIF -j ACCEPT
-$IPT -A OUTPUT -o $INTIF -j ACCEPT
 
 $IPT -A FORWARD -p icmp -i $INTIF -o $EXTIF -j ACCEPT
 $IPT -A FORWARD -p tcp --sport $UNPRIVPORTS -i $INTIF -o $EXTIF -j ACCEPT
 $IPT -A FORWARD -p udp --sport $UNPRIVPORTS -i $INTIF -o $EXTIF -j ACCEPT
 
-$IPT -t nat -A POSTROUTING -o $EXTIF -j MASQUERADE
+#$IPT -t nat -A POSTROUTING -o $EXTIF -j MASQUERADE
+$IPT -tnat -A POSTROUTING -o eth0 -p udp -j SNAT \
+    --to-source 10.0.3.111-10.0.3.113:50000-51000 --random
+$IPT -t nat -A POSTROUTING -o eth0 ! -p udp -j SNAT \
+    --to-source 10.0.3.111-10.0.3.113 --random
 
 $IPT -A INPUT -m limit --limit 10/minute \
     -i $EXTIF -j LOG --log-prefix "EXT DROP: "

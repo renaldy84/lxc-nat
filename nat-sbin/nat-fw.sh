@@ -12,6 +12,12 @@ INTNET=$(ifacenet $INTIF)
 
 HOST=10.0.3.10
 
+if [ "x$1" = "x" ]; then
+    LOG_PREFIX="LXC"
+else
+    LOG_PREFIX="LXC $1"
+fi
+
 $IPT -t filter -F
 $IPT -t nat -F
 $IPT -t mangle -F
@@ -44,14 +50,14 @@ $IPT -A FORWARD -p udp --sport $UNPRIVPORTS -i $INTIF -o $EXTIF -j ACCEPT
 
 $IPT -t nat -A POSTROUTING -o $EXTIF -j MASQUERADE
 
-$IPT -A INPUT -m limit --limit 10/minute \
-    -i $EXTIF -j LOG --log-prefix "EXT DROP: "
+#$IPT -A INPUT -m limit --limit 10/minute \
+#    -i $EXTIF -j LOG --log-prefix "$LOG_PREFIX EXT DROP: "
 
 $IPT -A OUTPUT -m limit --limit 10/minute \
-    -o $INTIF -j LOG --log-prefix "OUT DROP: "
+    -j LOG --log-prefix "$LOG_PREFIX OUT DROP: "
 
 $IPT -A INPUT -m limit --limit 10/minute \
-    -i $INTIF -j LOG --log-prefix "IN  DROP: "
+    -j LOG --log-prefix "$LOG_PREFIX IN  DROP: "
 
 $IPT -A FORWARD -m limit --limit 10/minute \
-    -i $INTIF -j LOG --log-prefix "FWD DROP: "
+    -j LOG --log-prefix "$LOG_PREFIX FWD DROP: "

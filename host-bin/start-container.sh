@@ -14,7 +14,7 @@ fi
 NAME=$1
 
 if [[ $NAME = fw* ]]; then
-    init=$(dirname $0)/../init/fw.sh
+    init=$(dirname $0)/../init/fw.sh $NAME
     sudo=sudo
 else
     init=/bin/bash

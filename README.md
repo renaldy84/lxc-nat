@@ -16,6 +16,8 @@ represent the public internet - testing more complex routing is not the purpose
 of this setup, so having a single network that the outer firewalls are
 connected to is sufficient.
 
+The scripts are licensed under Apache 2.0; see LICENSE.txt.
+
 # Setup #
 
 ## Install dependencies ##

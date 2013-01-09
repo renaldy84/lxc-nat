@@ -1,0 +1,15 @@
+10.0.3.10   lxc-host
+10.0.3.11   lxc-host1
+10.0.3.12   lxc-host2
+10.0.3.13   lxc-host3
+10.0.3.111  server1
+10.0.3.112  server2
+10.0.3.113  server3
+10.0.3.101  fw1
+10.0.3.102  fw2
+10.0.1.2    client1
+10.0.1.201  fwdub1
+10.0.2.2    client2
+10.0.2.202  fwdub2
+10.0.11.2   dubclient1
+10.0.12.2   dubclient2

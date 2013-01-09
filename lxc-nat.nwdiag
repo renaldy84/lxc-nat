@@ -1,0 +1,38 @@
+nwdiag {
+  network brpub {
+    address = "10.0.3.0/24"
+    
+    lxc-host [address = "10.0.3.10"]
+    fw1 [address = "10.0.3.101"]
+    fw2 [address = "10.0.3.102"]
+    server1 [address = "10.0.3.111"]
+    server2 [address = "10.0.3.112"]
+    server3 [address = "10.0.3.113"]
+  }
+  network brint1 {
+    address = "10.0.1.0/24"
+
+    fw1 [address = "10.0.1.1"]
+    client1 [address = "10.0.1.2"]
+    fwdub1 [address = "10.0.1.201"]
+  }
+  network brdub1 {
+    address = "10.0.11.0/24"
+
+    fwdub1 [address = "10.0.11.1"]
+    dubclient1 [address = "10.0.11.2"]
+  }
+  network brint2 {
+    address = "10.0.2.0/24"
+
+    fw2 [address = "10.0.2.1"]
+    client2 [address = "10.0.2.2"]
+    fwdub2 [address = "10.0.2.202"]
+  }
+  network brdub2 {
+    address = "10.0.12.0/24"
+
+    fwdub2 [address = "10.0.12.1"]
+    dubclient2 [address = "10.0.12.2"]
+  }
+}

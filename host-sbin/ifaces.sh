@@ -1,7 +1,10 @@
 #!/bin/bash
 
+# Create brpub, brint1/2, and brdub1/2
+# Must be run as root before starting any containers.
+
 brctl addbr brpub
-for n in $(seq 10 19); do
+for n in $(seq 10 13); do
     ip addr add 10.0.3.$n/24 dev brpub
 done
 ip link set brpub up

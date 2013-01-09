@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Allow traffic in/out from all bridge interfaces, and allow all traffic
+# inside the bridge. Creates new chains and inserts them at the top of
+# the main filter chains, to create clean separation from any existing
+# host firewall.
+
 source $(dirname $0)/../functions.sh
 
 #mkchain nat lxc-postrouting

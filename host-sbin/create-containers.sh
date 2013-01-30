@@ -25,6 +25,8 @@ lxc.network.link = brint$i
 #lxc.network.hwaddr = 4a:49:43:49:79:f$i
 lxc.network.ipv4 = 10.0.$i.2/24
 lxc.network.ipv4.gateway = 10.0.$i.1
+lxc.network.ipv6 = fd00:0:$i::2/48
+lxc.network.ipv6.gateway = fd00:0:$i::1
 END
     lxc-create -n $name -f $conf_file
 
@@ -37,11 +39,13 @@ lxc.network.type = veth
 lxc.network.flags = up
 lxc.network.link = brpub
 lxc.network.ipv4 = 10.0.3.10$i/24
+lxc.network.ipv6 = fd00:0:3::10$i/48
 
 lxc.network.type = veth
 lxc.network.flags = up
 lxc.network.link = brint$i
 lxc.network.ipv4 = 10.0.$i.1/24
+lxc.network.ipv6 = fd00:0:$i::1/48
 END
     lxc-create -n $name -f $conf_file
 
@@ -58,6 +62,7 @@ lxc.network.type = veth
 lxc.network.flags = up
 lxc.network.link = brpub
 lxc.network.ipv4 = 10.0.3.11$i/24
+lxc.network.ipv6 = fd00:0:3::11$i/48
 END
     lxc-create -n $name -f $conf_file
 
@@ -77,6 +82,8 @@ lxc.network.flags = up
 lxc.network.link = brdub$i
 lxc.network.ipv4 = 10.0.1$i.2/24
 lxc.network.ipv4.gateway = 10.0.1$i.1
+lxc.network.ipv6 = fd00:0:1$i::2/48
+lxc.network.ipv6.gateway = fd00:0:1$i::1
 END
     lxc-create -n $name -f $conf_file
 
@@ -91,11 +98,14 @@ lxc.network.flags = up
 lxc.network.link = brint$i
 lxc.network.ipv4 = 10.0.$i.20$i/24
 lxc.network.ipv4.gateway = 10.0.$i.1
+lxc.network.ipv6 = fd00:0:$i::20$i/48
+lxc.network.ipv6.gateway = fd00:0:$i::1
 
 lxc.network.type = veth
 lxc.network.flags = up
 lxc.network.link = brdub$i
 lxc.network.ipv4 = 10.0.1$i.1/24
+lxc.network.ipv6 = fd00:0:1$i::1/48
 END
     lxc-create -n $name -f $conf_file
 

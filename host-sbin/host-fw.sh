@@ -26,18 +26,24 @@ source $(dirname $0)/../functions.sh
 
 mkchain filter lxc-forward
 insertrule filter FORWARD -j lxc-forward
+mkchain 6 lxc-forward
+insertrule 6 FORWARD -j lxc-forward
 
 mkchain filter lxc-input
 insertrule filter INPUT -j lxc-input
+mkchain 6 lxc-input
+insertrule 6 INPUT -j lxc-input
 
 mkchain filter lxc-output
 insertrule filter OUTPUT -j lxc-input
+mkchain 6 lxc-output
+insertrule 6 OUTPUT -j lxc-input
 
 
 EXTNET=10.10.3.0/24
 
 for iface in brpub brint1 brint2 brdub1 brdub2; do
-    $IPT -A lxc-forward -i $iface -o $iface -j ACCEPT
-    $IPT -A lxc-input -i $iface -j ACCEPT
-    $IPT -A lxc-output -o $iface -j ACCEPT
+    ipt46 -A lxc-forward -i $iface -o $iface -j ACCEPT
+    ipt46 -A lxc-input -i $iface -j ACCEPT
+    ipt46 -A lxc-output -o $iface -j ACCEPT
 done

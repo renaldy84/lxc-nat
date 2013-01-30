@@ -17,15 +17,26 @@ PRIVPORTS="0:1023"                   # well-known, privileged port range
 UNPRIVPORTS="1024:65535"             # unprivileged port range
 
 IPT=/sbin/iptables
+IPT6=/sbin/ip6tables
+
+ipt46() {
+    $IPT "$@"
+    $IPT6 "$@"
+}
 
 mkchain() {
     table=$1
-    chain=$2
-    $IPT -t $table -L $chain >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-        $IPT -t $table -N $chain
+    if [ "$table" = "6" ]; then
+        cmd="$IPT6"
     else
-        $IPT -t $table -F $chain
+        cmd="$IPT -t $table"
+    fi
+    chain=$2
+    $cmd -L $chain >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        $cmd -N $chain
+    else
+        $cmd -F $chain
     fi
 }
 
@@ -33,13 +44,23 @@ insertrule() {
     table=$1
     chain=$2
     shift; shift
-    $IPT -t $table -C $chain "$@"
+    if [ "$table" = "6" ]; then
+        cmd="$IPT6"
+    else
+        cmd="$IPT -t $table"
+    fi
+    $cmd -C $chain "$@"
     if [ $? -ne 0 ]; then
-        $IPT -t $table -I $chain "$@"
+        $cmd -I $chain "$@"
     fi
 }
 
 ifacenet() {
     iface=$1
     echo $(ip addr show dev $1 | grep '^\s*inet ' | awk '{ print $2 }')
+}
+
+ifacenet6() {
+    iface=$1
+    echo $(ip addr show dev $1 | grep '^\s*inet6 .*scope global' | awk '{ print $2 }')
 }

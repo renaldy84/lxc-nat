@@ -17,14 +17,18 @@
 source $(dirname $0)/../functions.sh
 
 echo 1 > /proc/sys/net/ipv4/ip_forward
+echo 1 > /proc/sys/net/ipv6/conf/all/forwarding
 
 EXTIF=eth0
 INTIF=eth1
 
 EXTNET=$(ifacenet $EXTIF)
 INTNET=$(ifacenet $INTIF)
+EXTNET6=$(ifacenet6 $EXTIF)
+INTNET6=$(ifacenet6 $INTIF)
 
 HOST=10.0.3.10
+HOST6=fd00:0:3::10
 
 if [ "x$1" = "x" ]; then
     LOG_PREFIX="LXC"
@@ -35,43 +39,46 @@ fi
 $IPT -t filter -F
 $IPT -t nat -F
 $IPT -t mangle -F
+$IPT6 -F
 
-$IPT -P INPUT DROP
-$IPT -P OUTPUT DROP
-$IPT -P FORWARD DROP
+ipt46 -P INPUT DROP
+ipt46 -P OUTPUT DROP
+ipt46 -P FORWARD DROP
 
-$IPT -A INPUT -i lo -j ACCEPT
-$IPT -A OUTPUT -o lo -j ACCEPT
+ipt46 -A INPUT -i lo -j ACCEPT
+ipt46 -A OUTPUT -o lo -j ACCEPT
 
-$IPT -A INPUT  -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-$IPT -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-$IPT -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+ipt46 -A INPUT  -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+ipt46 -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+ipt46 -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
-$IPT -A INPUT -m conntrack --ctstate INVALID -j DROP
-$IPT -A OUTPUT -m conntrack --ctstate INVALID -j DROP
-$IPT -A FORWARD -m conntrack --ctstate INVALID -j DROP
+ipt46 -A INPUT -m conntrack --ctstate INVALID -j DROP
+ipt46 -A OUTPUT -m conntrack --ctstate INVALID -j DROP
+ipt46 -A FORWARD -m conntrack --ctstate INVALID -j DROP
 
 $IPT -A INPUT -s $INTNET -i $INTIF -j ACCEPT
+$IPT6 -A INPUT -s $INTNET6 -i $INTIF -j ACCEPT
 $IPT -A INPUT -s $HOST -i $EXTIF -j ACCEPT
+$IPT6 -A INPUT -s $HOST6 -i $EXTIF -j ACCEPT
 $IPT -A OUTPUT -p icmp -j ACCEPT
-$IPT -A OUTPUT -p tcp --sport $UNPRIVPORTS -o $EXTIF -j ACCEPT
-$IPT -A OUTPUT -p udp --sport $UNPRIVPORTS -o $EXTIF -j ACCEPT
-$IPT -A OUTPUT -o $INTIF -j ACCEPT
+$IPT6 -A OUTPUT -p ipv6-icmp -j ACCEPT
+ipt46 -A OUTPUT -p tcp --sport $UNPRIVPORTS -o $EXTIF -j ACCEPT
+ipt46 -A OUTPUT -p udp --sport $UNPRIVPORTS -o $EXTIF -j ACCEPT
+ipt46 -A OUTPUT -o $INTIF -j ACCEPT
 
 $IPT -A FORWARD -p icmp -i $INTIF -o $EXTIF -j ACCEPT
-$IPT -A FORWARD -p tcp --sport $UNPRIVPORTS -i $INTIF -o $EXTIF -j ACCEPT
-$IPT -A FORWARD -p udp --sport $UNPRIVPORTS -i $INTIF -o $EXTIF -j ACCEPT
+$IPT6 -A FORWARD -p ipv6-icmp -i $INTIF -o $EXTIF -j ACCEPT
+ipt46 -A FORWARD -p tcp --sport $UNPRIVPORTS -i $INTIF -o $EXTIF -j ACCEPT
+ipt46 -A FORWARD -p udp --sport $UNPRIVPORTS -i $INTIF -o $EXTIF -j ACCEPT
 
-$IPT -t nat -A POSTROUTING -o $EXTIF -j MASQUERADE
-
-#$IPT -A INPUT -m limit --limit 10/minute \
-#    -i $EXTIF -j LOG --log-prefix "$LOG_PREFIX EXT DROP: "
-
-$IPT -A OUTPUT -m limit --limit 10/minute \
+ipt46 -A OUTPUT -m limit --limit 10/minute \
     -j LOG --log-prefix "$LOG_PREFIX OUT DROP: "
 
-$IPT -A INPUT -m limit --limit 10/minute \
+ipt46 -A INPUT -m limit --limit 10/minute \
     -j LOG --log-prefix "$LOG_PREFIX IN  DROP: "
 
-$IPT -A FORWARD -m limit --limit 10/minute \
+ipt46 -A FORWARD -m limit --limit 10/minute \
     -j LOG --log-prefix "$LOG_PREFIX FWD DROP: "
+
+# NAT is ipv4 only
+$IPT -t nat -A POSTROUTING -o $EXTIF -j MASQUERADE

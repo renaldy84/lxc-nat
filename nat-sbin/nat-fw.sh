@@ -58,16 +58,17 @@ ipt46 -A FORWARD -m conntrack --ctstate INVALID -j DROP
 
 $IPT -A INPUT -s $INTNET -i $INTIF -j ACCEPT
 $IPT6 -A INPUT -s $INTNET6 -i $INTIF -j ACCEPT
+$IPT6 -A INPUT -p icmpv6 -j ACCEPT
 $IPT -A INPUT -s $HOST -i $EXTIF -j ACCEPT
 $IPT6 -A INPUT -s $HOST6 -i $EXTIF -j ACCEPT
 $IPT -A OUTPUT -p icmp -j ACCEPT
-$IPT6 -A OUTPUT -p ipv6-icmp -j ACCEPT
+$IPT6 -A OUTPUT -p icmpv6 -j ACCEPT
 ipt46 -A OUTPUT -p tcp --sport $UNPRIVPORTS -o $EXTIF -j ACCEPT
 ipt46 -A OUTPUT -p udp --sport $UNPRIVPORTS -o $EXTIF -j ACCEPT
 ipt46 -A OUTPUT -o $INTIF -j ACCEPT
 
 $IPT -A FORWARD -p icmp -i $INTIF -o $EXTIF -j ACCEPT
-$IPT6 -A FORWARD -p ipv6-icmp -i $INTIF -o $EXTIF -j ACCEPT
+$IPT6 -A FORWARD -p icmpv6 -i $INTIF -o $EXTIF -j ACCEPT
 ipt46 -A FORWARD -p tcp --sport $UNPRIVPORTS -i $INTIF -o $EXTIF -j ACCEPT
 ipt46 -A FORWARD -p udp --sport $UNPRIVPORTS -i $INTIF -o $EXTIF -j ACCEPT
 

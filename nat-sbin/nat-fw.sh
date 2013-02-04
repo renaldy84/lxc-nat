@@ -83,3 +83,9 @@ ipt46 -A FORWARD -m limit --limit 10/minute \
 
 # NAT is ipv4 only
 $IPT -t nat -A POSTROUTING -o $EXTIF -j MASQUERADE
+
+if [ $1 = "fw1" ]; then
+    ip route add fd00:0:2::/64 via fd00:0:3::102
+elif [ $1 = "fw2" ]; then
+    ip route add fd00:0:1::/64 via fd00:0:3::101
+fi
